@@ -1,0 +1,145 @@
+<!doctype html>
+<style>
+    body {
+    background-color: orangered;
+}
+</style>
+<body>
+
+    <h2>WELCOME TO DA GAME</h2>
+    <canvas id="gameCanvas" width="400" height="800"></canvas>
+  
+    <h3>
+        Jump to the top to win,<br>
+        1. use w a s d to control the character.<br>
+        2. you can jump once the character reaches the bottom half of the screen.<br>
+        3. See how fast you can get top without falling, if you fall to the bottom of the screen, your deth counter goes up but you can still continue since you are immortal.
+    
+    </h3>
+    <script src="platform.js"></script>
+    <script src="player.js"></script>
+    <script>
+        var canvas, canvasContext;
+
+        window.onload = function() {
+            canvas = document.getElementById('gameCanvas');
+            canvasContext = canvas.getContext('2d');
+
+            document.addEventListener('keydown', keyPressed);
+            document.addEventListener('keyup', keyReleased);
+
+
+            setInterval(mainloop, 1000/ 1000);
+        }
+        
+        var difficulty = '';
+        while(difficulty != 'easy' && difficulty != 'hard' || difficulty == '' || difficulty == null){
+            difficulty = prompt('What difficulty do you want? easy or hard','easy') || '';
+            difficulty = difficulty.toLowerCase();
+        }//detects the difficulty that is input.
+
+        
+        if(difficulty == 'easy'){
+            var platMaxWidth = 120;
+        var platMinWidth = 80;
+        }
+        if(difficulty == 'hard'){
+            var platMaxWidth = 40;
+        var platMinWidth = 30;
+        }
+
+        var deaths = 0;
+        const LEFT_KEY = 65;
+        const RIGHT_KEY = 68;
+        const UP_KEY = 87;
+        var godMode = false;
+
+        var leftKey = false;
+        var rightKey = false;
+        var upKey = false;
+        var gameWin = false;
+
+       
+        var bg = 'black';//background color of the canvas
+        var heroXpos = 0;
+        var heroYpos = 0;
+        var heroXvel = 1;
+        var heroYvel = .1;
+        const HERO_WIDTH = 7;
+        const HERO_HEIGHT = 10;
+
+        var jumping = false;
+        var startFall = true;
+        
+        var grounded = false;
+
+        var platforms = [];
+        var platformCount = 0;
+     var platformTotal = 36;
+
+
+        var hero = new Player(heroXpos, heroYpos, HERO_WIDTH, HERO_HEIGHT, 'white', heroXvel, heroYvel, jumping);
+
+        for (i = 0; i < platformTotal; i++) {
+            plaformDraw();
+          
+        }
+
+        function mainloop() {
+            colorRect(0, 0, canvas.width, canvas.height, bg);
+            hero.drawPlayer();
+            hero.playerMove();
+            hero.playerOnSurface();
+            hero.hasCollided();
+            hero.playerStartFall();
+           canvasContext.font = "16px Arial";
+            canvasContext.fillStyle = "red";
+            canvasContext.fillText("deaths =" + deaths, 10 ,20);// displays the death count
+            
+              
+
+
+            if (platforms.length > 0) {
+                platforms.forEach(function(item, index) {
+                    item.drawPlat();
+                    item.platMove();
+                    item.playerWin();
+                });
+            }
+            
+        }
+
+        function keyPressed(evt) {
+            if (evt.keyCode == LEFT_KEY) {
+                leftKey = true;
+            }
+            if (evt.keyCode == RIGHT_KEY) {
+                rightKey = true;
+            }
+            if (evt.keyCode == UP_KEY) {
+                upKey = true;
+            }//detects if the key is pressed
+        }
+
+        function keyReleased(evt) {
+            if (evt.keyCode == LEFT_KEY) {
+                leftKey = false;
+            }
+            if (evt.keyCode == RIGHT_KEY) {
+                rightKey = false;
+            }
+            if (evt.keyCode == UP_KEY) {
+                upKey = false;
+            }//detects if the key has been released
+        }
+
+
+
+      
+        function colorRect(x, y, w, h, c) {
+            canvasContext.fillStyle = c;
+            canvasContext.fillRect(x, y, w, h);
+        }
+
+    </script>
+</body>
